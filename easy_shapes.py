@@ -5,7 +5,6 @@ from random import randint
 class Processing2D():
     def __init__(self, surface: pg.Surface):
         self.screen = surface
-        self.screen.fill(BACKGROUND_COLOR)
 
     def draw_pixel(self, pos: tuple[int, int], color: tuple[int, int , int]):
         #gfxdraw.pixel(self.screen, pos[0], pos[1], color)
@@ -83,60 +82,17 @@ class Processing2D():
                 pixels.append((draw_pos[0], draw_pos[1]+1))
                 pixels.append((draw_pos[0], draw_pos[1]-1))
 
-    def update(self):
-        self.draw_circle((WIN_RES[0] // 2, WIN_RES[1] // 2), 100, GREEN)
-        #self.flood_fill((WIN_RES[0] // 2, WIN_RES[1] // 2), RED)
+    def rotate(self, pos: tuple[int, int], rot_point: tuple[int, int], angle):
+        rotate_matrix = np.array([
+                [math.cos(angle), math.sin(angle), 0],
+                [-math.sin(angle), math.cos(angle), 0],
+                [-rot_point[0]*(math.cos(angle) - 1) + rot_point[1]*math.sin(angle), -rot_point[1]*(math.cos(angle) - 1) - rot_point[0]*math.sin(angle), 1]
+            ])
+        
+        norm_coord = np.array([pos[0], pos[1], 1])
 
-class ControlledLine():
-    def __init__(self, processing: Processing2D):
-        self.processing = processing
-        self.x1, self.y1, self.x2, self.y2, self.angle = (WIN_RES[0] // 2, WIN_RES[1] // 2, WIN_RES[0] // 2, (WIN_RES[1] // 2) + 100, 0)
-        self.__draw_controlled_line()
+        return norm_coord  @ rotate_matrix
 
-    def update(self, delta_time):
-        self.__keyboard_controll(delta_time)
 
-    def __keyboard_controll(self, delta_time):
-        key_state = pg.key.get_pressed()
-        if key_state[pg.K_s]:
-            self.__undraw_controlled_line()
-            self.y2 += CONTROL_SPEED * delta_time
-            self.y1 += CONTROL_SPEED * delta_time
-            self.__draw_controlled_line()
-        if key_state[pg.K_w]:
-            self.__undraw_controlled_line()
-            self.y2 -= CONTROL_SPEED * delta_time
-            self.y1 -= CONTROL_SPEED * delta_time
-            self.__draw_controlled_line()
-        if key_state[pg.K_d]:
-            self.__undraw_controlled_line()
-            self.x2 += CONTROL_SPEED * delta_time
-            self.x1 += CONTROL_SPEED * delta_time
-            self.__draw_controlled_line()
-        if key_state[pg.K_a]:
-            self.__undraw_controlled_line()
-            self.x2 -= CONTROL_SPEED * delta_time
-            self.x1 -= CONTROL_SPEED * delta_time
-            self.__draw_controlled_line()
-        if key_state[pg.K_q] and pg.key:
-            self.__undraw_controlled_line()
-            self.angle += CONTROL_SPEED
-            self.__new_angle((WIN_RES[0] // 2, WIN_RES[1] // 2))
-            self.__draw_controlled_line()
-
-    def __new_angle(self, pos: tuple[int, int]):
-        rad = math.radians(self.angle)
-        print(self.angle)
-        x = (self.x1 - pos[0]) * math.cos(rad) - (self.y1 - pos[1]) * math.sin(rad) + pos[0]
-        y = (self.x1 - pos[0]) * math.sin(rad) + (self.y1 - pos[1]) * math.cos(rad) + pos[1]
-        self.x1, self.y1 = map(int, (x, y))
-        x = (self.x2 - pos[0]) * math.cos(rad) - (self.y2 - pos[1]) * math.sin(rad) + pos[0]
-        y = (self.x2 - pos[0]) * math.sin(rad) + (self.y2 - pos[1]) * math.cos(rad) + pos[1]
-        self.x2, self.y2 = map(int, (x, y))
-    def __draw_controlled_line(self):
-        self.processing.draw_line((self.x1, self.y1), (self.x2, self.y2), GREEN)
-    
-    def __undraw_controlled_line(self):
-        self.processing.draw_line((self.x1, self.y1), (self.x2, self.y2), BACKGROUND_COLOR)
 
 

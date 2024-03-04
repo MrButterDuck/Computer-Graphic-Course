@@ -4,7 +4,9 @@ import moderngl as mgl
 import sys
 import math
 
-WIN_RES = (1280, 720)
+WIN_RES = np.array([1280, 720])
+H_RES = WIN_RES // 2
+FPS = 60
 
 CONTROL_SPEED = 1
 
