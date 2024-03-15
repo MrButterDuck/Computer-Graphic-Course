@@ -20,7 +20,6 @@ class Engine():
         self.clock.tick(FPS)
         pg.display.flip()
         self.screen.fill(BACKGROUND_COLOR)
-
         #line
         self.procesing.draw_pixel(H_RES, BLUE)
         cor1 = list(map(int, self.procesing.rotate((H_RES[0]+100, H_RES[1]), H_RES, pg.time.get_ticks() * math.pi / 1800 )))
